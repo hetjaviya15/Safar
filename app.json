@@ -1,0 +1,78 @@
+{
+  "expo": {
+    "name": "Safar",
+    "slug": "safar",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/safar-logo.png",
+    "scheme": [
+      "safarapp",
+      "safar"
+    ],
+    "userInterfaceStyle": "light",
+    "ios": {
+      "icon": "./assets/images/safar-logo.png"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#F5F9FD",
+        "foregroundImage": "./assets/images/safar-logo.png"
+      },
+      "predictiveBackGestureEnabled": true,
+      "package": "com.hetjaviya.safar",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "safarapp"
+            },
+            {
+              "scheme": "safar"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/safar-logo.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F5F9FD",
+          "image": "./assets/images/safar-logo.png",
+          "imageWidth": 132
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-sharing",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Safar to select photos for your private trip galleries.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "881ebf9d-df47-4350-8c39-a2486539839b"
+      }
+    }
+  }
+}
