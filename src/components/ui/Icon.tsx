@@ -1,0 +1,17 @@
+import { ArrowLeft, ArrowRight, Backpack, Bell, BookOpen, CalendarDays, Camera, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleHelp, Compass, Copy, CreditCard, Download, Eye, EyeOff, Globe2, Heart, Home, Hotel, Image, KeyRound, LockKeyhole, LogOut, Mail, Map, MapPin, Menu, Minus, Mountain, Pencil, Plane, Plus, Search, Send, Settings, ShieldCheck, ShoppingBag, Sparkles, Ticket, TrainFront, Trash2, UserRound, UsersRound, Utensils, Wallet, Waves, X, type LucideIcon } from 'lucide-react-native';
+import { colors } from '@/constants/theme';
+import { Platform } from 'react-native';
+
+const icons: Record<string, LucideIcon> = {
+  home: Home, search: Search, explore: Compass, plus: Plus, trips: Backpack, user: UserRound, users: UsersRound, calendar: CalendarDays, map: Map, pin: MapPin, plane: Plane, hotel: Hotel, train: TrainFront, ticket: Ticket, packing: Backpack, wallet: Wallet, mail: Mail, lock: LockKeyhole, eye: Eye, 'eye-off': EyeOff, check: Check, verified: ShieldCheck, success: CheckCircle2, close: X, back: ArrowLeft, next: ArrowRight, 'chevron-right': ChevronRight, 'chevron-left': ChevronLeft, up: ChevronUp, down: ChevronDown, minus: Minus, edit: Pencil, trash: Trash2, heart: Heart, ai: Sparkles, send: Send, mountain: Mountain, waves: Waves, food: Utensils, camera: Camera, shopping: ShoppingBag, globe: Globe2, notes: BookOpen, image: Image, download: Download, copy: Copy, settings: Settings, logout: LogOut, bell: Bell, key: KeyRound, menu: Menu, help: CircleHelp, budget: CreditCard,
+};
+const aliases: Record<string, string> = { '⌂': 'home', '⌕': 'search', '+': 'plus', '＋': 'plus', '▣': 'trips', '●': 'user', '◉': 'wallet', '✈': 'plane', '✈️': 'plane', '✉': 'mail', '◆': 'lock', '‹': 'back', '←': 'back', '›': 'chevron-right', '→': 'next', '✕': 'close', '✓': 'check', '✦': 'ai', '⌖': 'pin', '📍': 'pin', '⌁': 'users', '♡': 'heart', '🧭': 'explore', '🌍': 'globe', '🧳': 'trips', '🎒': 'packing', '📅': 'calendar', '🗓️': 'calendar', '🎫': 'ticket', '🚆': 'train', '🏨': 'hotel', '🚗': 'map', '🚌': 'map', '🎟️': 'ticket', '📌': 'pin', '📝': 'notes', '💳': 'wallet', '👥': 'users', '👤': 'user', '👑': 'verified', '△': 'mountain', '♧': 'globe', '◒': 'food', '◇': 'ticket', '≈': 'waves', '♟♟': 'users', '!': 'help' };
+export function Icon({ name, size = 22, color = colors.primary }: { name: string; size?: number; color?: string }) {
+  const Component = icons[aliases[name] ?? name] ?? Compass;
+  // Icons are decorative; the containing control supplies its accessible label.
+  // Native accessibility props are not valid attributes on a web SVG element.
+  const accessibilityProps = Platform.OS === 'web'
+    ? { 'aria-hidden': true, focusable: false }
+    : { accessibilityElementsHidden: true, importantForAccessibility: 'no' as const };
+  return <Component size={size} color={color} strokeWidth={1.8} {...accessibilityProps} />;
+}
