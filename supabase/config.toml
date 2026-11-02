@@ -1,0 +1,18 @@
+project_id = "safar"
+
+[auth]
+site_url = "safarapp://email-confirmed"
+additional_redirect_urls = [
+  "safarapp://email-confirmed",
+  "safarapp://auth",
+  "safarapp://reset-password",
+  "safar://email-confirmed",
+  "safar://auth",
+  "safar://reset-password"
+]
+
+[functions.safar-ai]
+verify_jwt = true
+
+[functions.safar-destinations]
+verify_jwt = true

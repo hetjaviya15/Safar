@@ -1,0 +1,164 @@
+import { useCalendars, useLocales } from 'expo-localization';
+import { useState } from 'react';
+import { Text } from '@/components/ui/Typography';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { colors, radius } from '@/constants/theme';
+import { formatDate, parseDateKey, todayKey, toDateKey, tripDuration } from '@/utils/date';
+import { Icon } from './Icon';
+export function DateRangePicker({
+  start,
+  end,
+  onChange,
+  allowPast = false
+}) {
+  const [choosing, setChoosing] = useState('start');
+  const [month, setMonth] = useState(() => {
+    const d = parseDateKey(start);
+    return new Date(d.getFullYear(), d.getMonth(), 1, 12);
+  });
+  const calendars = useCalendars();
+  const locales = useLocales();
+  const firstDay = (calendars[0].firstWeekday ?? 2) - 1;
+  const offset = (month.getDay() - firstDay + 7) % 7;
+  const weekdays = Array.from({
+    length: 7
+  }, (_, i) => new Date(2026, 9, 18 + (firstDay + i) % 7).toLocaleDateString(locales[0].languageTag, {
+    weekday: 'short'
+  }));
+  const count = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
+  function choose(key) {
+    if (choosing === 'start' || key < start) {
+      onChange(key, end >= key ? end : key);
+      setChoosing('end');
+    } else {
+      onChange(start, key);
+      setChoosing('start');
+    }
+  }
+  return <View style={s.wrap}><View style={s.fields}>{['start', 'end'].map(part => <Pressable key={part} accessibilityRole="button" onPress={() => {
+        setChoosing(part);
+        const d = parseDateKey(part === 'start' ? start : end);
+        setMonth(new Date(d.getFullYear(), d.getMonth(), 1, 12));
+      }} style={[s.field, choosing === part && s.active]}><Icon name="calendar" size={20} /><View style={{
+          flex: 1
+        }}><Text style={s.caption}>{part === 'start' ? 'Start date' : 'End date'}</Text><Text style={s.value}>{formatDate(part === 'start' ? start : end)}</Text></View></Pressable>)}</View><View style={s.calendar}><View style={s.heading}><Pressable accessibilityLabel="Previous month" hitSlop={12} onPress={() => setMonth(d => new Date(d.getFullYear(), d.getMonth() - 1, 1, 12))}><Icon name="chevron-left" /></Pressable><Text style={s.month}>{month.toLocaleDateString(undefined, {
+            month: 'long',
+            year: 'numeric'
+          })}</Text><Pressable accessibilityLabel="Next month" hitSlop={12} onPress={() => setMonth(d => new Date(d.getFullYear(), d.getMonth() + 1, 1, 12))}><Icon name="chevron-right" /></Pressable></View><Text style={s.hint}>Select your {choosing === 'start' ? 'departure' : 'return'} date</Text><View style={s.grid}>{weekdays.map((d, i) => <Text key={`weekday-${i}`} style={s.weekday}>{d}</Text>)}{Array.from({
+          length: offset + count
+        }, (_, i) => {
+          if (i < offset) return <View key={i} style={s.cell} />;
+          const key = toDateKey(new Date(month.getFullYear(), month.getMonth(), i - offset + 1, 12));
+          const disabled = !allowPast && key < todayKey();
+          const edge = key === start || key === end;
+          const range = key >= start && key <= end;
+          return <Pressable accessibilityRole="button" accessibilityLabel={formatDate(key)} accessibilityState={{
+            selected: range,
+            disabled
+          }} disabled={disabled} key={key} onPress={() => choose(key)} style={[s.cell, range && s.range, edge && s.edge]}><Text style={[s.day, disabled && s.disabled, edge && s.selected]}>{i - offset + 1}</Text></Pressable>;
+        })}</View></View><View style={s.summary}><Icon name="calendar" /><Text style={s.days}>{tripDuration(start, end)} days</Text><Text style={s.hint}>of new memories</Text></View></View>;
+}
+const s = StyleSheet.create({
+  wrap: {
+    gap: 16
+  },
+  fields: {
+    gap: 10
+  },
+  field: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    padding: 14,
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'center',
+    backgroundColor: colors.surface
+  },
+  active: {
+    borderColor: colors.accent,
+    backgroundColor: colors.accentSoft
+  },
+  caption: {
+    color: colors.muted,
+    fontSize: 12,
+    marginBottom: 3
+  },
+  value: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: '700'
+  },
+  calendar: {
+    backgroundColor: colors.surface,
+    borderRadius: 20,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: colors.border
+  },
+  heading: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 10
+  },
+  month: {
+    fontSize: 17,
+    color: colors.text,
+    fontWeight: '800'
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 12
+  },
+  weekday: {
+    width: '14.2857%',
+    textAlign: 'center',
+    fontSize: 11,
+    color: colors.muted,
+    paddingBottom: 12
+  },
+  cell: {
+    width: '14.2857%',
+    height: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 2
+  },
+  range: {
+    backgroundColor: colors.accentSoft
+  },
+  edge: {
+    backgroundColor: colors.primary,
+    borderRadius: 12
+  },
+  day: {
+    color: colors.text,
+    fontWeight: '600',
+    fontSize: 14
+  },
+  disabled: {
+    color: colors.disabled
+  },
+  selected: {
+    color: '#fff'
+  },
+  summary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 9,
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.md,
+    padding: 14
+  },
+  days: {
+    color: colors.text,
+    fontSize: 19,
+    fontWeight: '800'
+  },
+  hint: {
+    color: colors.muted,
+    fontSize: 12
+  }
+});

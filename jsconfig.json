@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@/assets/*": [
+        "./assets/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "app.config.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "supabase/functions"
+  ]
+}
